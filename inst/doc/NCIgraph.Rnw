@@ -1,0 +1,241 @@
+%\VignetteIndexEntry{NCIgraph: networks from the NCI pathway integrated database as graphNEL objects.}
+%\VignettePackage{NCIgraph}
+
+\documentclass[11pt]{article}
+
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{natbib}
+\usepackage[pdftex]{graphicx}
+\SweaveOpts{keep.source=TRUE,eps=TRUE,pdf=TRUE,prefix=TRUE} 
+
+% R part
+\newcommand{\R}[1]{{\textsf{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Metas}[1]{{\texttt{#1}}}
+
+\begin{document}
+\title{NCIgraph: networks from the NCI pathway integrated database as graphNEL objects.}
+\author{Laurent Jacob}
+
+\maketitle
+\begin{abstract}
+  The NCI pathway integrated database is a large database of
+  biological networks, including nature curated pathways as well as
+  other pathways imported from biocarta and
+  reactome. \Rpackage{NCIgraph} is a data package that imports the NCI
+  PID networks as R graphNEL objects. It also gives several options to
+  parse and transform the networks.
+\end{abstract}
+
+\section{Introduction}
+
+An increasing number of approaches in statistics and machine learning
+for the analysis of molecular data use known biological networks. The
+objective is generally to obtain results that make sense at the
+biological system level and/or to improve the performances of the
+method~\citep{Ideker2002Discovering,Chuang2007Network-based,Rapaport2007Classification,Jacob2009Group,Vaske2010Inference,Vandin2010Algorithms,Jacob2010Gains}.
+
+All these methods require the knowledge of some biological
+networks. Several online databases regroup lists of such biological
+networks. One of them,
+KEGG~\footnote{\url{http://www.genome.jp/kegg/}}, has already been
+interfaced with R through the bioconductor package
+\Rpackage{KEGGgraph} which provides tools to read KEGG networks from
+xml files and manipulate the resulting R objects. Another major public
+database is the pathway interaction database (PID) maintained by
+Nature and the National Cancer Institute
+(NCI)~\footnote{\url{http://pid.nci.nih.gov/}}. \Rpackage{NCIgraph}
+provides systematic importation of these networks in R.
+
+The way \Rpackage{NCIgraph} proceeds is the following~:
+\begin{enumerate}
+\item Read the networks in BioPAX
+  format~\footnote{\url{http://www.biopax.org/}} in
+  Cytoscape~\footnote{\url{http://www.cytoscape.org/}}. This is done
+  using the BioPAX Cytoscape
+  plugin~\footnote{\url{http://cbio.mskcc.org/cytoscape/plugins/biopax/}}.
+\item Read graphNEL objects (defined in the \Rpackage{graph} R
+  package) from Cytoscape. This is done using the CytoscapeRPC
+  Cytoscape
+  plugin~\footnote{\url{https://wiki.nbic.nl/index.php/CytoscapeRPC}}
+  in combination with the \Rpackage{RCytoscape} bioconductor package.
+\item Optionally, parse the obtained raw network to get a graph which
+  can be more easily used in statistics methods.
+\end{enumerate}
+
+The output of the first two steps is available for download through
+\Rpackage{NCIgraph} for convenience, but users who want to load
+different versions of the networks, or networks stored in other BioPAX
+files can also perform the first two steps themselves and use
+\Rpackage{NCIgraph} to read the networks from Cytoscape.
+
+The idea of the parsing in the third step is to build a network whose
+nodes are genes and whose edges represent direct or indirect
+interactions at the \emph{expression} level. Some nodes in the raw
+networks stored in the BioPAX files represent proteins, protein
+complexes or concepts like transport, biochemical reactions etc. If a
+protein A is known to activate a protein B which is a transcription
+factor for gene C, a relevant network in terms of expression
+correlation should be A and B pointing to C, whereas the network will
+most likely be represented as A pointing to B pointing to C.  Since
+many statistical methods essentially use biological networks as a
+prior on the covariance structure of the gene expression, it is
+important to be able to perform such a transformation.
+
+\section{Software features}
+
+\Rpackage{NCIgraph} offers the following functionalities:
+\begin{description}
+\item[Reading of all networks opened in Cytoscape] This is essentially
+  a call to functions of \Rpackage{RCytoscape} to systematically load
+  all the networks currently opened in Cytoscape as graphNEL objects.
+\item[Providing data files of the loaded networks] In case you don't
+  want to load the networks through Cytoscape, \Rpackage{NCIgraph}
+  allows you to download the resulting R objects.
+\item[Parsing networks] \Rpackage{NCIgraph} provides a set of
+  functions to transform the networks that have been read from
+  Cytoscape, \emph{e.g.} to only keep the nodes corresponding to genes
+  or propagate regulation relationships.
+\item[NCIgraph objects] \Rpackage{NCIgraph} defines a
+  \Rclass{NCIgraph} class. \Rclass{NCIgraph} extends
+  \Rclass{graphNEL}, and is assigned special methods for
+  \Rfunction{getSubtype} and \Rfunction{subGraph}.
+\end{description}
+
+\section{Data}
+
+Since loading networks from Cytoscape is very lengthy and requires
+Cytoscape along with two of its plugins, we provide pre-loaded raw
+networks in the \Rpackage{NCIgraphData} bioconductor data
+package. \Rpackage{NCIgraphData} provides \Robject{NCI.cyList} and
+\Robject{reactome.cyList}. The former contains $460$ of the
+\emph{NCI-Nature curated} and \emph{BioCarta imported} pathways of the
+NCI PID. The latter contains $487$ if the \emph{Reactome imported}
+pathways of the NCI PID. Some NCI-PID networks are not in the list for
+one of the following reasons:
+\begin{itemize}
+\item The corresponding BioPAX file could not be read by the BioPAX
+  Cytoscape plugin (some of them even crash Cytoscape).
+\item RCytoscape couldn't read the network from Cytoscape.
+\end{itemize}
+
+For the latter problem, the \Rfunction{getNCIPathways} function
+catches the errors, and returns a list of the networks that were
+loaded in Cytoscape but could not be read into R.
+
+An important remark is that none of the networks imported from
+Reactome contains nodes associated with entrez ids, so parsing them as
+presented in the following case study will yield empty graphs.
+
+\section{Case studies}
+
+We now show on a simple example how \Rpackage{NCIgraph} can be
+used. In this vignette, we simply load some raw networks, parse them
+and visualize the results. For a more complete example where the
+\Rclass{NCIgraph} objects are used to identify differentially
+expressed pathways for some gene expression data, the reader is
+referred to the \texttt{Loi2008} demo of the \Rpackage{DEGraph}
+bioconductor package.
+
+\subsection{Loading the library and the data}
+
+We load the \Rpackage{NCIgraph} package by typing or pasting the
+following codes in R command line:
+<<lib, echo=TRUE>>=
+library(NCIgraph)
+@ 
+
+In this example, the raw networks have been pre-stored in an
+\texttt{.RData} file to avoid lengthy downloading and formatting. For
+examples on how to build these variables, see the
+\texttt{NCIgraphDemo} demo in the package.
+
+<<data, echo=TRUE>>=
+data("NCIgraphVignette", package="NCIgraph")
+@ 
+
+\subsection{Parsing the networks}
+
+The loaded NCI pathways can now be parsed~:
+
+<<data, echo=TRUE>>=
+grList <- getNCIPathways(cyList=NCI.demo.cyList, parseNetworks=TRUE, entrezOnly=TRUE, verbose=TRUE)$pList
+@ 
+
+Note that we specify that we want the networks to be parsed
+(parseNetworks=TRUE), and that the parsing should only keep nodes for
+which an entrez id is available in the raw networks
+(entrezOnly=TRUE). Other parsing options are directly passed to the
+\Rfunction{parseNCINetwork} function. In particular, it is possible to
+ask that regulation edges are not "propagated" (propagateReg=FALSE),
+\emph{i.e.}, referring to the example in Introduction, that the
+resulting network has A pointing to B, not to C.
+
+\subsection{Visualizing the result}
+
+We now plot the first element of the list before and after parsing. We
+first need another library to plot \Rclass{graphNEL} objects.
+
+<<lib2, echo=TRUE>>=
+library('Rgraphviz')
+@ 
+
+Then we can plot the graphs~:
+
+<<plotRaw, echo=TRUE, fig=FALSE>>=
+graph <- NCI.demo.cyList[[1]]
+gNames <- unlist(lapply(graph@nodeData@data,FUN=function(e) e$biopax.name))
+names(gNames) <- nodes(graph)
+graph <- layoutGraph(graph)
+nodeRenderInfo(graph) <- list(label=gNames, cex=0.75)
+renderGraph(graph)  
+@ 
+
+<<plotParsed, echo=TRUE, fig=FALSE>>=
+graph <- grList[[1]]
+gNames <- unlist(lapply(graph@nodeData@data,FUN=function(e) unique(e$biopax.xref.ENTREZGENE)))
+names(gNames) <- nodes(graph)
+graph <- layoutGraph(graph)
+nodeRenderInfo(graph) <- list(label=gNames, cex=0.75)
+renderGraph(graph)  
+@ 
+
+\begin{figure}
+  \begin{center}
+<<rawGraph,echo=FALSE,fig=TRUE>>=
+<<plotRaw>>
+@ 
+  \end{center}
+\caption{Raw network.}
+\label{fig:path}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+<<parsedGraph,echo=FALSE,fig=TRUE>>=
+<<plotParsed>>
+@ 
+  \end{center}
+\caption{Parsed network.}
+\label{fig:path2}
+\end{figure}
+
+\section*{Acknowledgements}
+
+We are very grateful to Paul Shannon for his very helpful advices on
+loading BioPAX files into R through Cytoscape and Sandrine Dudoit for
+her help on R package writing. We also thank the editorial team of the
+NCI Pathway Interaction Database who kindly provided the BioPAX files
+of all their networks and for helping us understand the organization
+of these files. Finally, we thank Nishant Gopalakrishnan who reviewed
+this package for his helpful corrections.
+
+\bibliographystyle{plainnat}
+\bibliography{NCIgraph-bibli}
+
+\end{document}
