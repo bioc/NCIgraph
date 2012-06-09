@@ -45,6 +45,10 @@
 
 translateNCI2GeneID <- function(g)
   {
+    if(length(nodes(g)) == 0){
+      return(NULL)
+    }
+    
     lambdaf <- function(node)
       {
         eid <- node$biopax.xref.ENTREZGENE
