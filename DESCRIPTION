@@ -1,15 +1,15 @@
 Package: NCIgraph
 Title: Pathways from the NCI Pathways Database
-Version: 1.11.1
+Version: 1.11.2
 Date: 2012-04-27
 Author: Laurent Jacob
 Maintainer: Laurent Jacob <laurent.jacob@gmail.com>
-Description: Provides various methods to load the pathways from the NCI Pathways Database in R graph objects and to re-format them.
+Description: Provides various methods to load the pathways from the NCI
+        Pathways Database in R graph objects and to re-format them.
 License: GPL-3
 LazyLoad: yes
 Imports: graph, KEGGgraph, methods, RBGL, RCytoscape, R.methodsS3
 Depends: graph, R (>= 2.10.0)
 Suggests: Rgraphviz
 Enhances: DEGraph
-biocViews: Pathways, GraphsAndNetworks
-
+biocViews: Pathways, GraphAndNetwork
