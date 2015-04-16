@@ -1,6 +1,6 @@
 Package: NCIgraph
 Title: Pathways from the NCI Pathways Database
-Version: 1.16.0
+Version: 1.17.0
 Date: 2012-04-27
 Author: Laurent Jacob
 Maintainer: Laurent Jacob <laurent.jacob@gmail.com>
