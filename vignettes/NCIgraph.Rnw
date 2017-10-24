@@ -54,16 +54,12 @@ provides systematic importation of these networks in R.
 
 The way \Rpackage{NCIgraph} proceeds is the following~:
 \begin{enumerate}
-\item Read the networks in BioPAX
-  format~\footnote{\url{http://www.biopax.org/}} in
-  Cytoscape~\footnote{\url{http://www.cytoscape.org/}}. This is done
-  using the BioPAX Cytoscape
-  plugin~\footnote{\url{http://cbio.mskcc.org/cytoscape/plugins/biopax/}}.
+\item Read the networks in BioPAX format in
+  Cytoscape~\footnote{\url{http://www.cytoscape.org/}}.
 \item Read graphNEL objects (defined in the \Rpackage{graph} R
-  package) from Cytoscape. This is done using the CytoscapeRPC
-  Cytoscape
-  plugin~\footnote{\url{https://wiki.nbic.nl/index.php/CytoscapeRPC}}
-  in combination with the \Rpackage{RCytoscape} bioconductor package.
+  package) from Cytoscape. This is done using the CyREST Cytoscape
+  plugin in combination with the \Rpackage{RCy3} bioconductor
+  package.
 \item Optionally, parse the obtained raw network to get a graph which
   can be more easily used in statistics methods.
 \end{enumerate}
@@ -92,7 +88,7 @@ important to be able to perform such a transformation.
 \Rpackage{NCIgraph} offers the following functionalities:
 \begin{description}
 \item[Reading of all networks opened in Cytoscape] This is essentially
-  a call to functions of \Rpackage{RCytoscape} to systematically load
+  a call to functions of \Rpackage{RCy3} to systematically load
   all the networks currently opened in Cytoscape as graphNEL objects.
 \item[Providing data files of the loaded networks] In case you don't
   want to load the networks through Cytoscape, \Rpackage{NCIgraph}
@@ -121,7 +117,7 @@ one of the following reasons:
 \begin{itemize}
 \item The corresponding BioPAX file could not be read by the BioPAX
   Cytoscape plugin (some of them even crash Cytoscape).
-\item RCytoscape couldn't read the network from Cytoscape.
+\item RCy3 couldn't read the network from Cytoscape.
 \end{itemize}
 
 For the latter problem, the \Rfunction{getNCIPathways} function

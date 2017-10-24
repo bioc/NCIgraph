@@ -49,7 +49,7 @@ library(NCIgraph)
 ## Example 1: with Cytoscape
 ##------------------------------
 
-## Must have Cytoscape running with some networks open and Cytoscape RPC plugin started.
+## Must have Cytoscape running with some networks open and CyREST plugin started.
 
 ## In this case, getNCIPathways will both read the raw networks from Cytoscape and parse them.
 
@@ -70,4 +70,3 @@ data("NCIgraphVignette", package="NCIgraph")
 
 grList <- getNCIPathways(cyList=NCI.demo.cyList, parseNetworks=TRUE, entrezOnly=TRUE, verbose=TRUE)$pList
 }
-

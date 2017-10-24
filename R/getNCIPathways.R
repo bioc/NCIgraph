@@ -57,17 +57,17 @@ getNCIPathways <- function(cyList=NULL, parseNetworks=TRUE, entrezOnly=TRUE, ver
   if(is.null(cyList))
     {      
       ## Get a list of all cytoscape windows
-      tt <- try({cy <- CytoscapeConnection(); wList <- getWindowList(cy)})
+      tt <- try({cy <- RCy3::CytoscapeConnection(); wList <- RCy3::getWindowList(cy)})
       
       if (class(tt)=="try-error")
-        stop("Failed to read graphs from Cytoscape. Check that Cytoscape is open and the Cytoscape RPC plugin is loaded.");
+        stop("Failed to read graphs from Cytoscape. Check that Cytoscape is open and the CyREST plugin is loaded.");
       
       ## Convert each cytoscape graph to a graphNEL
       cyList <- list()
       
       for(w in wList)
         {
-          tt <- try(cw.cellCycle <- existing.CytoscapeWindow(w, copy.graph=TRUE))          
+          tt <- try(cw.cellCycle <- RCy3:::existing.CytoscapeWindow(w, copy.graph.from.cytoscape.to.R=TRUE))          
           if (class(tt)=="try-error")
             {
               warning(sprintf("Failed to load network %s to R",w))
@@ -97,9 +97,9 @@ getNCIPathways <- function(cyList=NULL, parseNetworks=TRUE, entrezOnly=TRUE, ver
 }
 
 ############################################################################
-# HISTORY:
-# 2011-02-02
-# o Created.
+## HISTORY:
+## 2011-02-02
+## o Created.
 ############################################################################
 
 ## To generate the Cytoscape script (to be used through cytoscape command tool plugin):

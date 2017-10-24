@@ -16,7 +16,7 @@ importMethodsFrom(graph, addEdge, edgeData, "edgeData<-",
 
 importMethodsFrom(KEGGgraph, getSubtype)
 
-importMethodsFrom(RCytoscape, getWindowList)
+importMethodsFrom(RCy3, getWindowList)
 
 importFrom(graph, validGraph)
 
@@ -24,6 +24,6 @@ importFrom(methods, as, callNextMethod, new)
 
 importFrom(RBGL, connectedComp)
 
-importFrom(RCytoscape, CytoscapeConnection, existing.CytoscapeWindow)
+importFrom(RCy3, CytoscapeConnection)
 
 importFrom(R.methodsS3, throw)
