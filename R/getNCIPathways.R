@@ -56,8 +56,9 @@ getNCIPathways <- function(cyList=NULL, parseNetworks=TRUE, entrezOnly=TRUE, ver
   failedW <- c()
   if(is.null(cyList))
     {      
-      ## Get a list of all cytoscape windows
-      tt <- try({cy <- RCy3::CytoscapeConnection(); wList <- RCy3::getWindowList(cy)})
+        ## Get a list of all cytoscape windows
+        ## tt <- try({cy <- RCy3::CytoscapeConnection(); wList <- RCy3::getWindowList(cy)})
+        tt <- try({wList <- getNetworkList()})
       
       if (class(tt)=="try-error")
         stop("Failed to read graphs from Cytoscape. Check that Cytoscape is open and the CyREST plugin is loaded.");
@@ -67,14 +68,15 @@ getNCIPathways <- function(cyList=NULL, parseNetworks=TRUE, entrezOnly=TRUE, ver
       
       for(w in wList)
         {
-          tt <- try(cw.cellCycle <- RCy3:::existing.CytoscapeWindow(w, copy.graph.from.cytoscape.to.R=TRUE))          
-          if (class(tt)=="try-error")
+            ## tt <- try(cw.cellCycle <- RCy3:::existing.CytoscapeWindow(w, copy.graph.from.cytoscape.to.R=TRUE))
+            tt <- try(cw.cellCycle <- createGraphFromNetwork(w))          
+            if (class(tt)=="try-error")
             {
-              warning(sprintf("Failed to load network %s to R",w))
-              failedW <- c(failedW,w)
+                warning(sprintf("Failed to load network %s to R",w))
+                failedW <- c(failedW,w)
             }
-          else
-            cyList[[w]] <- cw.cellCycle@graph
+            else
+                cyList[[w]] <- cw.cellCycle#@graph
         }
     }
 

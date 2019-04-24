@@ -16,14 +16,12 @@ importMethodsFrom(graph, addEdge, edgeData, "edgeData<-",
 
 importMethodsFrom(KEGGgraph, getSubtype)
 
-importMethodsFrom(RCy3, getWindowList)
+importFrom(RCy3, getNetworkList, createGraphFromNetwork)
 
 importFrom(graph, validGraph)
 
 importFrom(methods, as, callNextMethod, new)
 
 importFrom(RBGL, connectedComp)
-
-importFrom(RCy3, CytoscapeConnection)
 
 importFrom(R.methodsS3, throw)
