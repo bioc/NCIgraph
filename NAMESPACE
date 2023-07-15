@@ -24,4 +24,4 @@ importFrom(methods, as, callNextMethod, new)
 
 importFrom(RBGL, connectedComp)
 
-importFrom(R.methodsS3, throw)
+importFrom(R.oo, throw)
