@@ -8,8 +8,8 @@ Description: Provides various methods to load the pathways from the NCI
         Pathways Database in R graph objects and to re-format them.
 License: GPL-3
 LazyLoad: yes
-Imports: graph, KEGGgraph, methods, RBGL, RCy3, R.methodsS3
-Depends: R (>= 2.10.0)
+Imports: graph, KEGGgraph, methods, RBGL, RCy3, R.oo
+Depends: R (>= 4.0.0)
 Suggests: Rgraphviz
 Enhances: DEGraph
 biocViews: Pathways, GraphAndNetwork
